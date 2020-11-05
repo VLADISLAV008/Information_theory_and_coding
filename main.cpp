@@ -1,11 +1,16 @@
 #include "Huffman_coding/Archiver.h"
 #include "LZW/Archiver_LZW.h"
+#include "Hamming_encoding/HammingEncoding.h"
 
 using namespace std;
 
-void huffman_test(bool code, int divider, string file_path) {
-    auto archiver = Archiver(divider);
+void huffman_test(char *argv[]) {
+    string mode(argv[1]);
+    bool code = mode == "-c";
+    int divider = atoi(argv[2]);
+    string file_path(argv[3]);
 
+    auto archiver = Archiver(divider);
     if (code) {
         archiver.code(file_path);
     } else {
@@ -13,9 +18,13 @@ void huffman_test(bool code, int divider, string file_path) {
     }
 }
 
-void lzw_test(bool code, int dict_capacity, string file_path) {
-    auto archiver = Archiver_LZW();
+void lzw_test(char *argv[]) {
+    string mode(argv[1]);
+    bool code = mode == "-c";
+    int dict_capacity = atoi(argv[2]);
+    string file_path(argv[3]);
 
+    auto archiver = Archiver_LZW();
     if (code) {
         archiver.code(file_path, dict_capacity);
     } else {
@@ -23,15 +32,24 @@ void lzw_test(bool code, int dict_capacity, string file_path) {
     }
 }
 
-int main(int argc, char *argv[]) {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-
+void hamming_encoding_test(char *argv[]) {
     string mode(argv[1]);
     bool code = mode == "-c";
-    int divider = atoi(argv[2]);
-    string file_path(argv[3]);
+    string bits(argv[2]);
 
-    lzw_test(code, divider, file_path);
+    auto encoding = HammingEncoding();
+    if (code) {
+        string encoding_bits = encoding.encode(bits);
+        cout << encoding_bits;
+    } else {
+        pair<string, string> result = encoding.decode(bits);
+        cout << result.second << " " << result.first;
+    }
+}
+
+int main(int argc, char *argv[]) {
+    //lzw_test(argv);
+    //huffman_test(argv);
+    hamming_encoding_test(argv);
     return 0;
 }
